@@ -1,0 +1,902 @@
+/* Jan Franěk - skript tvorby relační databáze pro správu odepsaných klientů*/
+USE WO_Management
+CREATE TABLE [Actions]
+(
+  [Action_ID] int NOT NULL IDENTITY,
+  [ActionType] nvarchar(50) NOT NULL,
+  [WOFile_ID] int NOT NULL,
+  [Employee_ID] int NOT NULL,
+  [Deal_ID] int NULL,
+  [Contact_ID] int NOT NULL,
+  [ContactResult_ID] int NULL,
+  [Strategy_ID] int NOT NULL,
+  [ActionCreationDateTime] datetime NOT NULL,
+  [ActionStartDateTime] datetime NOT NULL,
+  [ActionEndDatetime] datetime NULL,
+  [ActionComment] nvarchar(250) NULL,
+  [ActionFile_ID] int NULL,
+  PRIMARY KEY ([Action_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Akce provedené na klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Aktivity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'Action_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ Akce na klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'ActionType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Odpisové složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'WOFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Spravujícího zaměstnance', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'Employee_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI provedené Dohody s klientem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'Deal_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI kontaktu na klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'Contact_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'ID Výsledku aktivity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'ContactResult_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI užité strategie', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'Strategy_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum a čas vytvoření aktivity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'ActionCreationDateTime'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Začátek prováděné aktivity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'ActionStartDateTime'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Konec prováděné aktivity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'ActionEndDatetime'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Komentář k provedené akci', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'ActionComment'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI souboru uloženého na souborovém serveru', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Actions', @level2type=N'COLUMN', @level2name=N'ActionFile_ID'
+GO
+
+CREATE TABLE [Address]
+(
+  [Address_ID] int NOT NULL IDENTITY,
+  [Customer_ID] int NOT NULL,
+  [Street] nvarchar(250) NOT NULL,
+  [HouseNum] nvarchar(250) NOT NULL,
+  [FloorNum] nvarchar(250) NOT NULL,
+  [City] nvarchar(250) NOT NULL,
+  [PostalCode] int NOT NULL,
+  [State] nvarchar(250) NOT NULL,
+  [AddressType] nvarchar(50) NOT NULL,
+  [ValidFrom] date NOT NULL,
+  [ValidTo] date NULL,
+  [LastUpdatedDate] date NOT NULL,
+  [Comment] nvarchar(250) NOT NULL,
+  PRIMARY KEY ([Address_ID])
+)
+CREATE INDEX [Customer_id_index] ON [Address] ([Customer_ID])
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Adresy registrované na klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI adresy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'Address_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'Customer_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název ulice', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'Street'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Číslo popisné', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'HouseNum'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Patro/podlaží', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'FloorNum'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Vesnice/Město', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'City'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Poštovní směrovací Číslo', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'PostalCode'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Stát', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'State'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ adresy (trvalá, kontaktní)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'AddressType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum registrace adresy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'ValidFrom'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum ukončení platnosti adresy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'ValidTo'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Komentář k adrese', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Address', @level2type=N'COLUMN', @level2name=N'Comment'
+GO
+
+CREATE TABLE [AgreementStatus]
+(
+  [AgreementStatus_ID] int NOT NULL IDENTITY,
+  [AgreementStatusName] nvarchar(250) NOT NULL,
+  [AgreementStatusShort] nvarchar(50) NOT NULL,
+  [AgreementStatusDetail] nvarchar(250) NOT NULL,
+  PRIMARY KEY ([AgreementStatus_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Číselník stavu smluv', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AgreementStatus'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI stavu smlouvy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AgreementStatus', @level2type=N'COLUMN', @level2name=N'AgreementStatus_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název stavu smlouvy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AgreementStatus', @level2type=N'COLUMN', @level2name=N'AgreementStatusName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Zkratka názvu stavu smlouvy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AgreementStatus', @level2type=N'COLUMN', @level2name=N'AgreementStatusShort'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Detailní popis stavu smlouvy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AgreementStatus', @level2type=N'COLUMN', @level2name=N'AgreementStatusDetail'
+GO
+
+CREATE TABLE [Agreements]
+(
+  [Agreement_ID] int NOT NULL IDENTITY,
+  [WoFile_ID] int NOT NULL,
+  [AgreementStatus_ID] int NOT NULL,
+  [InterestRate] float NOT NULL,
+  [Term] int NOT NULL,
+  [TermType] nvarchar(50) NOT NULL,
+  [LoanAmount] int NOT NULL,
+  [RegularInstalmentValue] int NOT NULL,
+  [OutstandingBalance] int NOT NULL,
+  [FeesValue] int NOT NULL,
+  [FirstInstalmentDate] date NOT NULL,
+  [LastInstalmentDate] date NOT NULL,
+  [CreationDate] date NOT NULL,
+  [WOValue] int NOT NULL,
+  [WoDate] date NOT NULL,
+  PRIMARY KEY ([Agreement_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Tabulka smluv a jejich detailů', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI čísla smlouvy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'Agreement_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI přiřazené odpisové složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'WoFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI stavu klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'AgreementStatus_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Úroková sazba smlouvy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'InterestRate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Počet jednotek doby trvání smlouvy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'Term'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ jednotek trvání smlouvy dodávaný  mateřskou spol. - měsíční/týdenní', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'TermType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Celková zapůjčená částka', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'LoanAmount'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Částka pravidelných splátek', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'RegularInstalmentValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Zbývající částka k doplacení', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'OutstandingBalance'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Celková částka předepsaných poplatků v době odpisu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'FeesValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum první splátky na smlouvě', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'FirstInstalmentDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum poslední splátky na smlouvě', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'LastInstalmentDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum podepsání smlouvy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'CreationDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Celková odpisová hodnota smlouvy. Součet OutstandingBalance a FeesValue', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'WOValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum odpisu smlouvy z mateřské společnosti', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Agreements', @level2type=N'COLUMN', @level2name=N'WoDate'
+GO
+
+CREATE TABLE [ContactResult]
+(
+  [ContactResult_ID] int NOT NULL IDENTITY,
+  [ResultName] nvarchar(250) NOT NULL,
+  [ResultShort] nvarchar(50) NOT NULL,
+  [ResultDescription] nvarchar(250) NOT NULL,
+  PRIMARY KEY ([ContactResult_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Výsledky kontaktu s klientem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ContactResult'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Výsledku kontaktu s klientem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ContactResult', @level2type=N'COLUMN', @level2name=N'ContactResult_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název Výsledku', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ContactResult', @level2type=N'COLUMN', @level2name=N'ResultName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název výsledku zkr.', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ContactResult', @level2type=N'COLUMN', @level2name=N'ResultShort'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Popis výsledku hovoru', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ContactResult', @level2type=N'COLUMN', @level2name=N'ResultDescription'
+GO
+
+CREATE TABLE [ContactType]
+(
+  [ContactType_ID] int NOT NULL IDENTITY,
+  [ContactTypeName] nvarchar(250) NOT NULL,
+  [ContactTypeShort] nvarchar(10) NOT NULL,
+  PRIMARY KEY ([ContactType_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typy kontaktů', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ContactType'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Typu kontaktu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ContactType', @level2type=N'COLUMN', @level2name=N'ContactType_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název typu kontaktu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ContactType', @level2type=N'COLUMN', @level2name=N'ContactTypeName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název typu kontaktu zkr.', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ContactType', @level2type=N'COLUMN', @level2name=N'ContactTypeShort'
+GO
+
+CREATE TABLE [CustomerDeals]
+(
+  [Deal_ID] int NOT NULL IDENTITY,
+  [WOFile_ID] int NOT NULL,
+  [DealValue] int NOT NULL,
+  [DealType] nvarchar(50) NOT NULL,
+  [StartDate] date NOT NULL,
+  [EndDate] date NOT NULL,
+  [CreationDate] date NOT NULL,
+  [Fulfillment] bit NULL,
+  PRIMARY KEY ([Deal_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Dohody s klientem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerDeals'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI dohody s klientem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerDeals', @level2type=N'COLUMN', @level2name=N'Deal_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Odpisové složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerDeals', @level2type=N'COLUMN', @level2name=N'WOFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Dohodnutá částka s klientem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerDeals', @level2type=N'COLUMN', @level2name=N'DealValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ dohody s klientem (PTP, Odklad)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerDeals', @level2type=N'COLUMN', @level2name=N'DealType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum začátku dohody s klientem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerDeals', @level2type=N'COLUMN', @level2name=N'StartDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum konce dohody s klientem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerDeals', @level2type=N'COLUMN', @level2name=N'EndDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum vytvoření dohody', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerDeals', @level2type=N'COLUMN', @level2name=N'CreationDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Naplnění dohody', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerDeals', @level2type=N'COLUMN', @level2name=N'Fulfillment'
+GO
+
+CREATE TABLE [CustomerStatus]
+(
+  [CustomerStatus_ID] int NOT NULL IDENTITY,
+  [CustomerStatusName] nvarchar(50) NOT NULL,
+  [CustomerStatusShort] nvarchar(50) NOT NULL,
+  PRIMARY KEY ([CustomerStatus_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Možné stavy klienta ve společnosti', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerStatus'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'ID Stavu klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerStatus', @level2type=N'COLUMN', @level2name=N'CustomerStatus_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název statusu klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerStatus', @level2type=N'COLUMN', @level2name=N'CustomerStatusName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název statusu klienta zkr.', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomerStatus', @level2type=N'COLUMN', @level2name=N'CustomerStatusShort'
+GO
+
+CREATE TABLE [Customers]
+(
+  [Customer_ID] int NOT NULL IDENTITY,
+  [TitleBefore] nvarchar(50) NULL,
+  [ForeName] nvarchar(250) NOT NULL,
+  [MiddleName] nvarchar(250) NULL,
+  [SurName] nvarchar(250) NOT NULL,
+  [FullName] nvarchar(250) NOT NULL,
+  [TitleAfter] nvarchar(50) NULL,
+  [PIN] nvarchar(20) NOT NULL,
+  [Sex] nvarchar(10) NOT NULL,
+  [DateofBirth] date NOT NULL,
+  [Age] int NOT NULL,
+  [LastUpdateDate] date NOT NULL,
+  [PersonalDocumentType] nvarchar(50) NOT NULL,
+  [PersonalDocumentNum] int NOT NULL,
+  [CustomerStatus_ID] int NOT NULL,
+  PRIMARY KEY ([Customer_ID])
+)
+CREATE INDEX [index_2] ON [Customers] ([PIN])
+CREATE UNIQUE INDEX [candidate_PIN] ON [Customers] ([PIN])
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Tabulka osobních údajů klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'Customer_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Titul před jménem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'TitleBefore'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Křestní jméno klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'ForeName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Prostřední jméno klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'MiddleName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Příjmení klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'SurName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Plné jméno klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'FullName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Titul za jménem klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'TitleAfter'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Rodné číslo klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'PIN'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Pohlaví klienta. "Male" nebo "Female".', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'Sex'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum narození klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'DateofBirth'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Věk klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'Age'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum poslední aktualizace údajů', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'LastUpdateDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ registrovaného osobního dokladu (občanský průkaz)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'PersonalDocumentType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Číslo osobního dokladu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'PersonalDocumentNum'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'ID aktuálního stavu klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Customers', @level2type=N'COLUMN', @level2name=N'CustomerStatus_ID'
+GO
+
+CREATE TABLE [CustomersContacts]
+(
+  [Contacts_ID] int NOT NULL IDENTITY,
+  [Customer_ID] int NOT NULL,
+  [WOFile_ID] int NOT NULL,
+  [ContactType_ID] int NOT NULL,
+  [ContactValue] nvarchar(250) NOT NULL,
+  [ContactFullName] nvarchar(250) NULL DEFAULT NULL,
+  [ValidFrom] date NOT NULL,
+  [ValidTo] date NULL DEFAULT NULL,
+  [LastUpdatedDate] date NOT NULL,
+  PRIMARY KEY ([Contacts_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Kontaky uložené pro komunikaci s klientem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI kontaktu na klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts', @level2type=N'COLUMN', @level2name=N'Contacts_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts', @level2type=N'COLUMN', @level2name=N'Customer_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Vymáhací složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts', @level2type=N'COLUMN', @level2name=N'WOFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI typu kontaktu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts', @level2type=N'COLUMN', @level2name=N'ContactType_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Uložená hodnota kontaktu na klienta (e-mail, telefonní číslo, apod.)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts', @level2type=N'COLUMN', @level2name=N'ContactValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Jméno kontaktní osoby, pokud je typem kontaktu fyzická osoba.  V opačném případě je NULL.', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts', @level2type=N'COLUMN', @level2name=N'ContactFullName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum uložení kontaktu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts', @level2type=N'COLUMN', @level2name=N'ValidFrom'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum ukončení platnosti kontaktu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts', @level2type=N'COLUMN', @level2name=N'ValidTo'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum poslední aktualizace řádku', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustomersContacts', @level2type=N'COLUMN', @level2name=N'LastUpdatedDate'
+GO
+
+CREATE TABLE [DebtAgreement]
+(
+  [DebtAgreementRow_ID] int NOT NULL IDENTITY,
+  [DebtAgreement_ID] int NOT NULL,
+  [DebtAgreementType] nvarchar(250) NOT NULL,
+  [Agreement_ID] int NOT NULL,
+  [InstalmentType] nvarchar(50) NOT NULL,
+  [InstalmentRow] int NOT NULL,
+  [InstalmentExpectedValue] int NOT NULL,
+  [InstalmentAllocatedValue] int NOT NULL,
+  [OutstandingBalance] int NOT NULL,
+  [LastUpdatedDate] date NOT NULL,
+  [ValidFrom] date NOT NULL,
+  [ValidTo] date NOT NULL,
+  PRIMARY KEY ([DebtAgreementRow_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Rozpis historie a umoření dluhu na smlouvě', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI řádku rozpisů dluhů na smlouvě', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'DebtAgreementRow_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Odkazující na PDF předpis v daném typu předpisu v CRM softwaru', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'DebtAgreement_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ předpisu - předodpisový, poodpisový', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'DebtAgreementType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI smlouvy', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'Agreement_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ předepsané splátky dodávaný účetním systémem - Předodpisová/Poodpisová', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'InstalmentType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Pořadí předepsané splátky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'InstalmentRow'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Očekávaná hodnota předepsané splátky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'InstalmentExpectedValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Alokovaná částky plátky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'InstalmentAllocatedValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Zbývající dluh', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'OutstandingBalance'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum poslední aktualizace řádku', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'LastUpdatedDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum začátku platnosti předepsané splátky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'ValidFrom'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum konce platnosti předepsané splátky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtAgreement', @level2type=N'COLUMN', @level2name=N'ValidTo'
+GO
+
+CREATE TABLE [DebtFiles]
+(
+  [DebtFileRow_ID] int NOT NULL IDENTITY,
+  [DebtFile_ID] int NOT NULL,
+  [WOFile_ID] int NOT NULL,
+  [InstalmentRow] int NOT NULL,
+  [InstalmentStartDate] date NOT NULL,
+  [InstalmentExpectedDate] date NOT NULL,
+  [InstalmentExpectedValue] int NOT NULL,
+  [InstalmentAllocatedValue] int NOT NULL,
+  [OutstandingBalance] int NOT NULL,
+  [LastUpdateDate] date NOT NULL,
+  [ValidFrom] date NOT NULL,
+  [ValidTo] date NULL,
+  PRIMARY KEY ([DebtFileRow_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Rozpis předepsaných splátek na složku a jejich splácení', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI řádku Rozpisů', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'DebtFileRow_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI složky rozpisu dluhu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'DebtFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Odpisové složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'WOFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Pořadí předepsané splátky dluhu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'InstalmentRow'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Poslední datum očekávané splátky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'InstalmentExpectedDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Hodnota očekávané splátky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'InstalmentExpectedValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Celková přiřazená částka ke splátce', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'InstalmentAllocatedValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Zbývající  nedoplatek', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'OutstandingBalance'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum aktualizace dat řádku', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'LastUpdateDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum začátku platnosti předpisu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'ValidFrom'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum konce předpisu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DebtFiles', @level2type=N'COLUMN', @level2name=N'ValidTo'
+GO
+
+CREATE TABLE [EmployeeRole]
+(
+  [RoleRow_ID] int NOT NULL IDENTITY,
+  [Employee_ID] int NOT NULL,
+  [Team_ID] int NOT NULL,
+  [RoleName] nvarchar(250) NOT NULL,
+  [RoleShort] nvarchar(50) NOT NULL,
+  [ValidFrom] date NOT NULL,
+  [ValidTo] date NULL,
+  PRIMARY KEY ([RoleRow_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Historizující tabulka pozice ZMT ve společnosti', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'EmployeeRole'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI řádku pozice zaměstnance', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'EmployeeRole', @level2type=N'COLUMN', @level2name=N'RoleRow_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Zaměstnance', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'EmployeeRole', @level2type=N'COLUMN', @level2name=N'Employee_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Aktuálního týmu zaměstnance', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'EmployeeRole', @level2type=N'COLUMN', @level2name=N'Team_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název Pozice', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'EmployeeRole', @level2type=N'COLUMN', @level2name=N'RoleName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Zkratka názvu pozice', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'EmployeeRole', @level2type=N'COLUMN', @level2name=N'RoleShort'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum začátku platnosti přiřazené pozice ZMT', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'EmployeeRole', @level2type=N'COLUMN', @level2name=N'ValidFrom'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum konce platnosti přiřazené pozice ZMT', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'EmployeeRole', @level2type=N'COLUMN', @level2name=N'ValidTo'
+GO
+
+CREATE TABLE [Employees]
+(
+  [Employee_ID] int NOT NULL IDENTITY,
+  [LoginName] nvarchar(50) NOT NULL,
+  [ForeName] nvarchar(250) NOT NULL,
+  [MiddleName] nvarchar(250) NULL,
+  [SurName] nvarchar(250) NOT NULL,
+  [EmployeeStatus] nvarchar(50) NOT NULL,
+  [TelephoneNum] nvarchar(50) NULL,
+  [MobileNum] nvarchar(50) NULL,
+  [EMail] nvarchar(250) NOT NULL,
+  [RegisteredFrom] date NOT NULL,
+  [RegisteredTo] date NULL,
+  [LastUpdatedDate] date NOT NULL,
+  PRIMARY KEY ([Employee_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Tabulka zaměstnanců vymáhací společnosti', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Zaměstnance', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'Employee_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Přihlašovací jméno ZMT do CRM softwaru', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'LoginName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Křestní jméno ZMT', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'ForeName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Prostřední jméno ZMT', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'MiddleName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Příjmení Zaměstnance', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'SurName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Stav zaměstnance přidělený HR softwarem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'EmployeeStatus'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Telefonní číslo na ZMT do kanceláře', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'TelephoneNum'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Mobilní telefonní číslo zaměstnance', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'MobileNum'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'E-mail na ZMT', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'EMail'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum registrace ZMT do systému', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'RegisteredFrom'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum konce registrace ZMT do systému', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'RegisteredTo'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum poslední aktualizace údajů řádku', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Employees', @level2type=N'COLUMN', @level2name=N'LastUpdatedDate'
+GO
+
+CREATE TABLE [FileStatus]
+(
+  [FileStatus_ID] int NOT NULL IDENTITY,
+  [FileStatusName] nvarchar(250) NOT NULL,
+  [FileStatusShort] nvarchar(50) NOT NULL,
+  [FileStatusDetail] nvarchar(250) NOT NULL,
+  PRIMARY KEY ([FileStatus_ID])
+)
+CREATE INDEX [index_1] ON [FileStatus] ([FileStatus_ID])
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Stav složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FileStatus'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Stavu složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FileStatus', @level2type=N'COLUMN', @level2name=N'FileStatus_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Plný název stavu složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FileStatus', @level2type=N'COLUMN', @level2name=N'FileStatusName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Zkrácený název stavu složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FileStatus', @level2type=N'COLUMN', @level2name=N'FileStatusShort'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Popis stavu složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FileStatus', @level2type=N'COLUMN', @level2name=N'FileStatusDetail'
+GO
+
+CREATE TABLE [ISIR]
+(
+  [ISIRFile_ID] int NOT NULL IDENTITY,
+  [ISIRFileFullName] nvarchar(250) NOT NULL,
+  [PIN] nvarchar(20) NOT NULL,
+  [SenateNum] int NOT NULL,
+  [FileType] nvarchar(10) NOT NULL DEFAULT 'ISIR',
+  [RegularNum] int NOT NULL,
+  [Year] int NOT NULL,
+  [ISIRFileStatus] nvarchar(250) NOT NULL,
+  [RegistrationDate] date NOT NULL,
+  [EndDate] date NULL,
+  [Deleted] bit NOT NULL,
+  PRIMARY KEY ([ISIRFile_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Přihlášky do insolvenčního řízení', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Unikátní identifikátor ISIR složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'ISIRFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Celý název ISIR složky složený z SenatenNum+Filetype+RegularNum+/+Year', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'ISIRFileFullName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Rodné číslo registrované osoby', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'PIN'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Číslo senátu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'SenateNum'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ složky, nativně "ISIR"', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'FileType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Regulerní číslo ISIR složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'RegularNum'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Rok založení ISIR spisu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'Year'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Aktuální stav ISIR složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'ISIRFileStatus'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum registrace insolvence', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'RegistrationDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Konec insolvenční řízení', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'EndDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Smazáno z ISIR; ano/ne', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIR', @level2type=N'COLUMN', @level2name=N'Deleted'
+GO
+
+CREATE TABLE [ISIRActions]
+(
+  [ISIRActions_ID] int NOT NULL IDENTITY,
+  [ISIRFile_ID] int NOT NULL,
+  [ActionType] nvarchar(250) NOT NULL,
+  [RegistrationDate] date NOT NULL,
+  [StartDate] date NOT NULL,
+  [EndDate] date NULL,
+  PRIMARY KEY ([ISIRActions_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Tabulka aktivit provedených na složce ISIR v průběhu řízení.', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIRActions'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Akce ISIR', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIRActions', @level2type=N'COLUMN', @level2name=N'ISIRActions_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Unikátní identifikátor ISIR složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIRActions', @level2type=N'COLUMN', @level2name=N'ISIRFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ akce ISIR řízení', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIRActions', @level2type=N'COLUMN', @level2name=N'ActionType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum registrace aktivity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIRActions', @level2type=N'COLUMN', @level2name=N'RegistrationDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Začátek data rozhodnutí', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIRActions', @level2type=N'COLUMN', @level2name=N'StartDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Konec data rozhodnutí', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ISIRActions', @level2type=N'COLUMN', @level2name=N'EndDate'
+GO
+
+CREATE TABLE [Strategy]
+(
+  [Strategy_ID] int NOT NULL IDENTITY,
+  [StrategyName] nvarchar(250) NOT NULL,
+  [StrategyShort] nvarchar(50) NOT NULL,
+  [StrategyType] nvarchar(50) NOT NULL,
+  [StrategySetting] nvarchar(250) NOT NULL,
+  [StrategyHash] bigint NOT NULL,
+  [RegistrationDate] date NOT NULL,
+  [StartDate] date NOT NULL,
+  [EndDate] date NULL,
+  PRIMARY KEY ([Strategy_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Vymáhací strategie a jejich nastavení', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI strategie', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy', @level2type=N'COLUMN', @level2name=N'Strategy_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Celý název strategie', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy', @level2type=N'COLUMN', @level2name=N'StrategyName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název strategie zkr.', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy', @level2type=N'COLUMN', @level2name=N'StrategyShort'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ strategie', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy', @level2type=N'COLUMN', @level2name=N'StrategyType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Nastavení pravidel strategie vyjádřeno textem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy', @level2type=N'COLUMN', @level2name=N'StrategySetting'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Hash kód strategie s nastavením pro účely CRM softwaru', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy', @level2type=N'COLUMN', @level2name=N'StrategyHash'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum registrace strategie do systému', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy', @level2type=N'COLUMN', @level2name=N'RegistrationDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum začátku platnosti strategie', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy', @level2type=N'COLUMN', @level2name=N'StartDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum konce platnosti strategie', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Strategy', @level2type=N'COLUMN', @level2name=N'EndDate'
+GO
+
+CREATE TABLE [Teams]
+(
+  [Team_ID] int NOT NULL IDENTITY,
+  [TeamName] nvarchar(250) NOT NULL,
+  [TeamShort] nvarchar(50) NOT NULL,
+  [TeamLeader_ID] int NOT NULL,
+  [TeamDepartment] nvarchar(250) NOT NULL,
+  [LastUpdatedDate] date NOT NULL,
+  [StartDate] date NOT NULL,
+  [EndDate] date NULL,
+  PRIMARY KEY ([Team_ID])
+)
+CREATE INDEX [index_2] ON [Teams] ([TeamLeader_ID])
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Týmu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Teams', @level2type=N'COLUMN', @level2name=N'Team_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název týmu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Teams', @level2type=N'COLUMN', @level2name=N'TeamName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Zkratka názvu týmu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Teams', @level2type=N'COLUMN', @level2name=N'TeamShort'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI vedoucího týmu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Teams', @level2type=N'COLUMN', @level2name=N'TeamLeader_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Oddělení týmu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Teams', @level2type=N'COLUMN', @level2name=N'TeamDepartment'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum poslední aktualizace řádku', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Teams', @level2type=N'COLUMN', @level2name=N'LastUpdatedDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum založení týmu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Teams', @level2type=N'COLUMN', @level2name=N'StartDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum ukončení týmu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Teams', @level2type=N'COLUMN', @level2name=N'EndDate'
+GO
+
+CREATE TABLE [Transactions]
+(
+  [Transaction_ID] int NOT NULL IDENTITY,
+  [WOFile_ID] int NOT NULL,
+  [TransactionType] nvarchar(50) NOT NULL,
+  [Currency] nvarchar(50) NOT NULL,
+  [TransactionValue] int NOT NULL,
+  [TransactionValueCZK] int NOT NULL,
+  [VariableSymbol] int NULL,
+  [SpecificSymbol] int NULL,
+  [CreationDate] datetime NOT NULL,
+  [RegistrationDateTime] datetime NOT NULL,
+  PRIMARY KEY ([Transaction_ID])
+)
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Tabulka transakcí na odpisovou složku', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Provedené transakce', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'Transaction_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Odpisové složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'WOFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Typ  transakce dodávaný účetním softwarem', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'TransactionType'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Měna provedené transakce', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'Currency'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Číselná hodnota transakce', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'TransactionValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Číselná hodnota transakce v Kč', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'TransactionValueCZK'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Variabilní symbol transakce', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'VariableSymbol'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Specifický symbol transakce', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'SpecificSymbol'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum a čas odeslání transakce', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'CreationDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum a čas zanesení transakce do systému', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Transactions', @level2type=N'COLUMN', @level2name=N'RegistrationDateTime'
+GO
+
+CREATE TABLE [WOFiles]
+(
+  [WOFile_ID] int NOT NULL IDENTITY,
+  [Customer_ID] int NOT NULL,
+  [WOReason_ID] int NOT NULL,
+  [WOValue] int NOT NULL,
+  [OutstandingBalance] int NOT NULL,
+  [ActualStrategy_ID] int NOT NULL,
+  [ManagingTeam_ID] int NOT NULL,
+  [RegistringEmployee_ID] int NOT NULL,
+  [WOFileStatus_ID] int NOT NULL,
+  [WOFileCreationDate] date NOT NULL,
+  [WODate] date NOT NULL,
+  [VariableSymbol] int NOT NULL,
+  [SpecificSymbol] int NULL,
+  PRIMARY KEY ([WOFile_ID])
+)
+CREATE INDEX [index_2] ON [WOFiles] ([Customer_ID])
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Tabulka odpisových složek', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Odpisové složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'WOFile_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'Customer_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Důvodu odpisu složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'WOReason_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Celková hodnota odepsané částky na všech smlouvách', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'WOValue'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Zbývající částka k výběru', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'OutstandingBalance'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Aktuálně užité strategie', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'ActualStrategy_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI týmu, který má složku ve správě', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'ManagingTeam_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI registrujícího zaměstnance', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'RegistringEmployee_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'ID Stavu odpisové složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'WOFileStatus_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum vytvoření odpisové složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'WOFileCreationDate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Datum odpisu všech smluv  v mateřské společnosti', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'WODate'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Variabilní symbol složky pro transakce', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'VariableSymbol'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Specifický symbol odpisové složky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOFiles', @level2type=N'COLUMN', @level2name=N'SpecificSymbol'
+GO
+
+CREATE TABLE [WOReason]
+(
+  [WOReason_ID] int NOT NULL IDENTITY,
+  [WOReasonName] nvarchar(50) NOT NULL,
+  [WOReasonShort] nvarchar(50) NOT NULL,
+  [WOReasonDetail] nvarchar(250) NOT NULL,
+  PRIMARY KEY ([WOReason_ID])
+)
+CREATE INDEX [index_2] ON [WOReason] ([WOReason_ID])
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Důvody odpisu klienta', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOReason'
+GO
+
+EXEC sp_addextendedproperty @name = N'comment', @value = N'UI Důvodu odpisu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOReason', @level2type=N'COLUMN', @level2name=N'WOReason_ID'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název důvodu odpisu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOReason', @level2type=N'COLUMN', @level2name=N'WOReasonName'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Název důvodu odpisu zkr.', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOReason', @level2type=N'COLUMN', @level2name=N'WOReasonShort'
+GO
+EXEC sp_addextendedproperty @name = N'comment', @value = N'Detaily spojené s důvodem odpisu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WOReason', @level2type=N'COLUMN', @level2name=N'WOReasonDetail'
+GO
+
+ALTER TABLE [Address]
+ADD CONSTRAINT [fk_Customers_Address] FOREIGN KEY ([Customer_ID])
+REFERENCES [Customers] ([Customer_ID]);
+GO
+
+ALTER TABLE [Customers]
+ADD CONSTRAINT [fk_CustomerStatus_Customers] FOREIGN KEY ([CustomerStatus_ID])
+REFERENCES [CustomerStatus] ([CustomerStatus_ID]);
+GO
+
+ALTER TABLE [WOFiles]
+ADD CONSTRAINT [fk_WOReason_Files] FOREIGN KEY ([WOReason_ID])
+REFERENCES [WOReason] ([WOReason_ID]);
+GO
+
+ALTER TABLE [WOFiles]
+ADD CONSTRAINT [fk_Team_WOFiles] FOREIGN KEY ([ManagingTeam_ID])
+REFERENCES [Teams] ([Team_ID]);
+GO
+
+ALTER TABLE [Agreements]
+ADD CONSTRAINT [fk_WOFiles_Agreements] FOREIGN KEY ([WoFile_ID])
+REFERENCES [WOFiles] ([WOFile_ID]);
+GO
+
+ALTER TABLE [Transactions]
+ADD CONSTRAINT [fk_WOFiles_Transactions] FOREIGN KEY ([WOFile_ID])
+REFERENCES [WOFiles] ([WOFile_ID]);
+GO
+
+ALTER TABLE [WOFiles]
+ADD CONSTRAINT [fk_Customers_Files] FOREIGN KEY ([Customer_ID])
+REFERENCES [Customers] ([Customer_ID]);
+GO
+
+ALTER TABLE [Actions]
+ADD CONSTRAINT [fk_WOFiles_Actions] FOREIGN KEY ([WOFile_ID])
+REFERENCES [WOFiles] ([WOFile_ID]);
+GO
+
+ALTER TABLE [ISIR]
+ADD CONSTRAINT [fk_customers_isir] FOREIGN KEY ([PIN])
+REFERENCES [Customers] ([PIN]);
+GO
+
+ALTER TABLE [Actions]
+ADD CONSTRAINT [fk_Actions_Employees] FOREIGN KEY ([Employee_ID])
+REFERENCES [Employees] ([Employee_ID]);
+GO
+
+ALTER TABLE [WOFiles]
+ADD CONSTRAINT [fk_Employee_WOFiles] FOREIGN KEY ([RegistringEmployee_ID])
+REFERENCES [Employees] ([Employee_ID]);
+GO
+
+ALTER TABLE [CustomersContacts]
+ADD CONSTRAINT [fk_Customers_CustomersContacts] FOREIGN KEY ([Customer_ID])
+REFERENCES [Customers] ([Customer_ID]);
+GO
+
+ALTER TABLE [CustomersContacts]
+ADD CONSTRAINT [fk_Files_CustomersContacts] FOREIGN KEY ([WOFile_ID])
+REFERENCES [WOFiles] ([WOFile_ID]);
+GO
+
+ALTER TABLE [CustomersContacts]
+ADD CONSTRAINT [fk_ContactType_CustomersContacts] FOREIGN KEY ([ContactType_ID])
+REFERENCES [ContactType] ([ContactType_ID]);
+GO
+
+ALTER TABLE [WOFiles]
+ADD CONSTRAINT [fk_FileStatus_Filestatus_ID] FOREIGN KEY ([WOFileStatus_ID])
+REFERENCES [FileStatus] ([FileStatus_ID]);
+GO
+
+ALTER TABLE [WOFiles]
+ADD CONSTRAINT [fk_strategy_Files] FOREIGN KEY ([ActualStrategy_ID])
+REFERENCES [Strategy] ([Strategy_ID]);
+GO
+
+ALTER TABLE [Actions]
+ADD CONSTRAINT [fk_CustomerDeals_Actions] FOREIGN KEY ([Deal_ID])
+REFERENCES [CustomerDeals] ([Deal_ID]);
+GO
+
+ALTER TABLE [CustomerDeals]
+ADD CONSTRAINT [fk_WOFiles_CustomerDeals] FOREIGN KEY ([WOFile_ID])
+REFERENCES [WOFiles] ([WOFile_ID]);
+GO
+
+ALTER TABLE [Actions]
+ADD CONSTRAINT [fk_CustomerContacts_Actions] FOREIGN KEY ([Contact_ID])
+REFERENCES [CustomersContacts] ([Contacts_ID]);
+GO
+
+ALTER TABLE [Actions]
+ADD CONSTRAINT [fk_ContactResult_Actions] FOREIGN KEY ([ContactResult_ID])
+REFERENCES [ContactResult] ([ContactResult_ID]);
+GO
+
+ALTER TABLE [Agreements]
+ADD CONSTRAINT [fk_AgreementStatus_Agreements] FOREIGN KEY ([AgreementStatus_ID])
+REFERENCES [AgreementStatus] ([AgreementStatus_ID]);
+GO
+
+ALTER TABLE [ISIRActions]
+ADD CONSTRAINT [fk_ISIR_ISIRActions] FOREIGN KEY ([ISIRFile_ID])
+REFERENCES [ISIR] ([ISIRFile_ID]);
+GO
+
+ALTER TABLE [DebtFiles]
+ADD CONSTRAINT [fk_WOFiles_Debtfile] FOREIGN KEY ([WOFile_ID])
+REFERENCES [WOFiles] ([WOFile_ID]);
+GO
+
+ALTER TABLE [DebtAgreement]
+ADD CONSTRAINT [fk_Agreements_DebtAgreement] FOREIGN KEY ([Agreement_ID])
+REFERENCES [Agreements] ([Agreement_ID]);
+GO
+
+ALTER TABLE [Teams]
+ADD CONSTRAINT [fk_Employees_Teams_Teamleader] FOREIGN KEY ([TeamLeader_ID])
+REFERENCES [Employees] ([Employee_ID]);
+GO
+
+ALTER TABLE [EmployeeRole]
+ADD CONSTRAINT [fk_Employees_EmployeeRole] FOREIGN KEY ([Employee_ID])
+REFERENCES [Employees] ([Employee_ID]);
+GO
+
+ALTER TABLE [EmployeeRole]
+ADD CONSTRAINT [fk_Teams_EmployeeRole] FOREIGN KEY ([Team_ID])
+REFERENCES [Teams] ([Team_ID]);
+GO
+
+ALTER TABLE [Actions]
+ADD CONSTRAINT [fk_Strategy_Actions] FOREIGN KEY ([Strategy_ID])
+REFERENCES [Strategy] ([Strategy_ID]);
+GO
